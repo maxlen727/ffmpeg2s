@@ -1,4 +1,4 @@
-name: Rust CI/CD
+name: Rust Build and Publish
 
 on:
   push:
@@ -8,22 +8,36 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          target: x86_64-pc-linux-gnu
-      - name: Build
-        run: cargo build --release
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Rust
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+
+    - name: Build and test (Linux)
+      run: cargo build --release && cargo test
+
+    - name: Publish (Linux)
+      run: cargo publish --token ${{ secrets.CRATES_IO_TOKEN }}
 
   build-windows:
     runs-on: windows-latest
+
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          target: x86_64-pc-windows-msvc
-      - name: Build
-        run: cargo build --release
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Rust
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+
+    - name: Build and test (Windows)
+      run: cargo build --release && cargo test
+
+    - name: Publish (Windows)
+      run: cargo publish --token ${{ secrets.CRATES_IO_TOKEN }}
