@@ -6,7 +6,7 @@ on:
       - master
 
 jobs:
-  build:
+  build-linux:
     runs-on: ubuntu-latest
 
     steps:
@@ -22,7 +22,9 @@ jobs:
       run: cargo build --release && cargo test
 
     - name: Publish (Linux)
-      run: cargo publish --token ${{ secrets.CRATES_IO_TOKEN }}
+      run: cargo publish
+      env:
+        CARGO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   build-windows:
     runs-on: windows-latest
@@ -34,10 +36,12 @@ jobs:
     - name: Set up Rust
       uses: actions-rs/toolchain@v1
       with:
-        toolchain: stable
+        toolchain: stable-x86_64-pc-windows-msvc
 
     - name: Build and test (Windows)
       run: cargo build --release && cargo test
 
     - name: Publish (Windows)
-      run: cargo publish --token ${{ secrets.CRATES_IO_TOKEN }}
+      run: cargo publish
+      env:
+        CARGO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
